@@ -65,6 +65,26 @@ public class LockManager<T extends AppLockActivity> {
     }
 
     /**
+     * Disables the app lock and remove all configs by calling {@link AppLock#disableAndRemoveConfiguration()}
+     */
+    public void resetAppLock() {
+        if (mAppLocker != null) {
+            mAppLocker.disableAndRemoveConfiguration();
+        }
+        mAppLocker = null;
+    }
+
+    /**
+     * Expire current AppLock Timer {@link AppLock#expireTimer()} ()}
+     */
+    public void expireAppLockTimer() {
+        if (mAppLocker != null) {
+            mAppLocker.expireTimer();
+        }
+        mAppLocker = null;
+    }
+
+    /**
      * Disables the previous app lock and set a new one
      */
     public void setAppLock(AppLock appLocker) {

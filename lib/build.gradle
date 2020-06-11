@@ -1,4 +1,11 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'maven-publish'
+
+// needed for local maven
+def artifactId = 'lollipin'
+def groupId = 'tech.arifandi'
 
 android {
     compileSdkVersion 26
@@ -15,6 +22,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+}
+
+// needed for local maven
+install {
+    repositories.mavenInstaller {
+        pom.groupId = 'tech.arifandi'
+        pom.version = '0.0.1'
+        pom.artifactId = "lollipin"
     }
 }
 
@@ -37,26 +53,19 @@ repositories {
     }
 }
 
+project.afterEvaluate {
+    publishing {
+        publications {
+            library(MavenPublication) {
+                setGroupId groupId
+                setArtifactId artifactId
+                version android.defaultConfig.versionName
+
+                artifact bundleReleaseAar
+            }
+        }
+    }
+}
+
 //gradle clean build uploadArchives
 apply from: 'https://raw.github.com/omadahealth/omada-nexus/master/gradle-mvn-push/gradle-mvn-push.gradle'
-
-//task androidSourcesJar(type: Jar) {
-//    classifier = 'sources'
-//    from android.sourceSets.main.java.sourceFiles
-//}
-//artifacts {
-//    archives androidSourcesJar
-//}
-//
-//apply plugin: 'maven'
-//uploadArchives {
-//    repositories {
-//        mavenDeployer {
-//            repository(url: uri("../../omada-nexus/release"))
-//            snapshotRepository(url: uri("../../omada-nexus/release"))
-//            pom.groupId = GROUP
-//            pom.artifactId = POM_ARTIFACT_ID
-//            pom.version = VERSION_NAME
-//        }
-//    }
-//}

@@ -263,6 +263,17 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
     }
 
     @Override
+    public void expireTimer() {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+
+        long timeout = getTimeout();
+        long currentTimeMillis = System.currentTimeMillis();
+        currentTimeMillis = currentTimeMillis - timeout - 1; // should be expired.
+        editor.putLong(LAST_ACTIVE_MILLIS_PREFERENCE_KEY, currentTimeMillis);
+        editor.apply();
+    }
+
+    @Override
     public boolean checkPasscode(String passcode) {
         Algorithm algorithm = Algorithm.getFromText(mSharedPreferences.getString(PASSWORD_ALGORITHM_PREFERENCE_KEY, ""));
 
@@ -362,6 +373,7 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
         long lastActiveMillis = getLastActiveMillis();
         long passedTime = System.currentTimeMillis() - lastActiveMillis;
         long timeout = getTimeout();
+
         if (lastActiveMillis > 0 && passedTime <= timeout) {
             Log.d(TAG, "no enough timeout " + passedTime + " for "
                     + timeout);
